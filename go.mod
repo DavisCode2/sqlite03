@@ -1,4 +1,4 @@
-module sqlite03
+module github.com/davisCode2/sqlite03
 
 go 1.23.1
 
