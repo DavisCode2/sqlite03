@@ -8,17 +8,17 @@ The names of the tables are:
 
 The definitions of the tables are:
 
-	    CREATE TABLE Users (
-	        ID INTEGER PRIMARY KEY,
-	        Username TEXT
-	    );
+	CREATE TABLE Users (
+	    ID INTEGER PRIMARY KEY,
+	    Username TEXT
+	);
 
-	    CREATE TABLE Userdata (
-	        UserID INTEGER NOT NULL,
-	        Name TEXT,
-	        Surname TEXT,
-	        Description TEXT
-	    );
+	CREATE TABLE Userdata (
+	    UserID INTEGER NOT NULL,
+	    Name TEXT,
+	    Surname TEXT,
+	    Description TEXT
+	);
 */
 package sqlite03
 
@@ -30,6 +30,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 )
+
 /*
 This global variable holds the SQLite3 database filepath
 
