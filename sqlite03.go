@@ -1,3 +1,25 @@
+/*
+The package works on 2 tables on an SQLite database.
+
+The names of the tables are:
+
+  - Users
+  - Userdata
+
+The definitions of the tables are:
+
+	    CREATE TABLE Users (
+	        ID INTEGER PRIMARY KEY,
+	        Username TEXT
+	    );
+
+	    CREATE TABLE Userdata (
+	        UserID INTEGER NOT NULL,
+	        Name TEXT,
+	        Surname TEXT,
+	        Description TEXT
+	    );
+*/
 package sqlite03
 
 import (
@@ -8,19 +30,28 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 )
+/*
+This global variable holds the SQLite3 database filepath
 
+	Filename: Is the filepath to the database file
+*/
 var (
 	Filename = ""
 )
 
+// The Userdata structure is for holding full user data
+// from the Userdata table and the Username from the
+// Users table
 type UserData struct {
-	ID int
-	Username string
-	Name string
-	Surname string
-	Description string 
+	ID          int
+	Username    string
+	Name        string
+	Surname     string
+	Description string
 }
 
+// openConnection() is for opening the SQLite3 connection
+// in order to be used by the other functions of the package.
 func openConnection() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", Filename)
 	if err != nil {
@@ -29,7 +60,7 @@ func openConnection() (*sql.DB, error) {
 	return db, nil
 }
 
-// The function returns the User ID of the username 
+// The function returns the User ID of the username
 // -1 if the user does not exist
 
 func exists(username string) int {
@@ -61,7 +92,7 @@ func exists(username string) int {
 		userID = id
 	}
 	return userID
-} 
+}
 
 // AddUser function adds a new user to the sqlite database
 // It returns the new User ID
@@ -103,6 +134,12 @@ func AddUser(d UserData) int {
 	return userID
 }
 
+/*
+DeleteUser deletes an existing user if the user exists.
+It requires the User ID of the user to be deleted.
+
+It returns error
+*/
 func DeleteUser(id int) error {
 	db, err := openConnection()
 	if err != nil {
@@ -124,7 +161,7 @@ func DeleteUser(id int) error {
 			return err
 		}
 	}
-	
+
 	// Check whether the username exists
 	if exists(username) != id {
 		return fmt.Errorf("user with ID %d does not exist", id)
@@ -146,6 +183,9 @@ func DeleteUser(id int) error {
 	return nil
 }
 
+// ListUsers() lists all users in the database.
+//
+// Returns a slice of Userdata to the calling function.
 func ListUsers() ([]UserData, error) {
 	Data := []UserData{}
 	db, err := openConnection()
@@ -163,9 +203,9 @@ func ListUsers() ([]UserData, error) {
 	for rows.Next() {
 		var id int
 		var username string
-		var name string 
-		var surname string 
-		var desc string 
+		var name string
+		var surname string
+		var desc string
 
 		err = rows.Scan(&id, &username, &name, &surname, &desc)
 		temp := UserData{ID: id, Username: username, Name: name, Surname: surname, Description: desc}
@@ -177,6 +217,12 @@ func ListUsers() ([]UserData, error) {
 	return Data, nil
 }
 
+/*
+UpdateUser() is for updating an existing user
+given a Userdata structure.
+The user ID of the user to be updated is found
+inside the function.
+*/
 func UpdateUser(d UserData) error {
 	db, err := openConnection()
 	if err != nil {
